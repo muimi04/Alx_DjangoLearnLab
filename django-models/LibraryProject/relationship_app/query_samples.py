@@ -26,12 +26,12 @@ except Library.DoesNotExist:
     print(f"No library found with name {library_name}")
 
 # Query 3: Retrieve the librarian for a library
-# Query 3: Retrieve the librarian for a library
+library_name = "Downtown Library"
 try:
-    library = Library.objects.get(name="Downtown Library")
-    librarian = library.librarian
-    print(f"Librarian at {library.name}: {librarian.name}")
+    library = Library.objects.get(name=library_name)
+    if hasattr(library, 'librarian'):
+        print(f"Librarian at {library.name}: {library.librarian.name}")
+    else:
+        print(f"No librarian assigned to {library.name}")
 except Library.DoesNotExist:
-    print("Library not found.")
-except Librarian.DoesNotExist:
-    print("Librarian not assigned to this library.")
+    print(f"No library found with name {library_name}")
