@@ -2,10 +2,8 @@ import os
 import django
 import sys
 
-# Add the path to your project
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../LibraryProject')
-
-# Set up Django environment
+# Setup Django environment
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'LibraryProject.settings')
 django.setup()
 
