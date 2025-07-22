@@ -25,8 +25,8 @@ except Library.DoesNotExist:
     print(f"No library found with name: {library_name}")
 
 # 3. Retrieve the librarian for a library
-try:
-    librarian = Librarian.objects.get(library__name=library_name)
+librarian = Librarian.objects.filter(library__name=library_name).first()
+if librarian:
     print(f"Librarian for {library_name}: {librarian.name}")
-except Librarian.DoesNotExist:
+else:
     print(f"No librarian assigned to {library_name}")
