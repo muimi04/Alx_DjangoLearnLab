@@ -42,3 +42,34 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return render(request, 'relationship_app/logout.html')
+ 
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import UserProfile
+
+# Role-checking helper
+def check_role(user, role_name):
+    return hasattr(user, 'userprofile') and user.userprofile.role == role_name
+
+def admin_required(user):
+    return check_role(user, 'Admin')
+
+def librarian_required(user):
+    return check_role(user, 'Librarian')
+
+def member_required(user):
+    return check_role(user, 'Member')
+
+@login_required
+@user_passes_test(admin_required)
+def admin_view(request):
+    return render(request, 'admin_view.html')
+
+@login_required
+@user_passes_test(librarian_required)
+def librarian_view(request):
+    return render(request, 'librarian_view.html')
+
+@login_required
+@user_passes_test(member_required)
+def member_view(request):
+    return render(request, 'member_view.html')
