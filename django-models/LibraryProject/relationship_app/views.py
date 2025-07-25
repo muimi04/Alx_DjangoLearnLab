@@ -43,33 +43,32 @@ def logout_view(request):
     logout(request)
     return render(request, 'relationship_app/logout.html')
  
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import UserProfile
 
-# Role-checking helper
-def check_role(user, role_name):
-    return hasattr(user, 'userprofile') and user.userprofile.role == role_name
+def is_admin(user):
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
 
-def admin_required(user):
-    return check_role(user, 'Admin')
+def is_librarian(user):
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
 
-def librarian_required(user):
-    return check_role(user, 'Librarian')
+def is_member(user):
+    return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
 
-def member_required(user):
-    return check_role(user, 'Member')
 
 @login_required
-@user_passes_test(admin_required)
+@user_passes_test(is_admin)
 def admin_view(request):
-    return render(request, 'admin_view.html')
+    return render(request, 'relationship_app/admin_view.html')
+
 
 @login_required
-@user_passes_test(librarian_required)
+@user_passes_test(is_librarian)
 def librarian_view(request):
-    return render(request, 'librarian_view.html')
+    return render(request, 'relationship_app/librarian_view.html')
+
 
 @login_required
-@user_passes_test(member_required)
+@user_passes_test(is_member)
 def member_view(request):
-    return render(request, 'member_view.html')
+    return render(request, 'relationship_app/member_view.html')
