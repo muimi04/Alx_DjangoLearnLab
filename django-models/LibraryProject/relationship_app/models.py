@@ -27,6 +27,7 @@ class Book(models.Model):
             ("can_add_book", "Can add a new book"),
             ("can_edit_book", "Can edit book"),
             ("can_delete_book", "Can delete book"),
+             ("can_change_book", "Can change book"), 
         ]
 
 # ✅ New model for user role-based access control
