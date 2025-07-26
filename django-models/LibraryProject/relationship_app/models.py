@@ -22,6 +22,13 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        permissions = [
+            ("can_add_book", "Can add a new book"),
+            ("can_edit_book", "Can edit book"),
+            ("can_delete_book", "Can delete book"),
+        ]
+
 # ✅ New model for user role-based access control
 class UserProfile(models.Model):
     ROLE_CHOICES = [
