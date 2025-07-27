@@ -51,3 +51,11 @@ class Article(models.Model):
             ("can_edit", "Can edit article"),
             ("can_delete", "Can delete article"),
         ]
+
+class Book(models.Model):
+    title = models.CharField(max_length=255)
+    author = models.CharField(max_length=255)
+    publication_year = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.title
