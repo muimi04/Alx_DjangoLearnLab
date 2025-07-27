@@ -132,3 +132,6 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Enable the browser’s XSS filtering
 SECURE_BROWSER_XSS_FILTER = True  # Deprecated in newer browsers, but still commonly set
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
