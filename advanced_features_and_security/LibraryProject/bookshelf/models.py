@@ -34,3 +34,20 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
+# Add this at the end of bookshelf/models.py
+
+class Article(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    published_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        permissions = [
+            ("can_view", "Can view article"),
+            ("can_create", "Can create article"),
+            ("can_edit", "Can edit article"),
+            ("can_delete", "Can delete article"),
+        ]
