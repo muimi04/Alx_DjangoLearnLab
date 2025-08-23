@@ -4,5 +4,11 @@
 
 {% block content %}
     <h1>Welcome to My Blog</h1>
-    <p>This is the homepage.</p>
+    <p>This is the homepage where you can explore posts and updates.</p>
+
+    <div class="home-links">
+        <a href="{% url 'posts' %}">View Blog Posts</a> |
+        <a href="{% url 'register' %}">Create an Account</a> |
+        <a href="{% url 'login' %}">Login</a>
+    </div>
 {% endblock %}

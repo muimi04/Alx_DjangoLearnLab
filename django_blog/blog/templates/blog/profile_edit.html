@@ -1,0 +1,40 @@
+{% extends "blog/base.html" %}
+{% block title %}Edit Profile{% endblock %}
+{% block content %}
+  <h2>Edit Profile</h2>
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    <fieldset>
+      <legend>Account</legend>
+      {{ uform.non_field_errors }}
+      <div>
+        <label>First name</label>
+        {{ uform.first_name }} {{ uform.first_name.errors }}
+      </div>
+      <div>
+        <label>Last name</label>
+        {{ uform.last_name }} {{ uform.last_name.errors }}
+      </div>
+      <div>
+        <label>Email</label>
+        {{ uform.email }} {{ uform.email.errors }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Profile</legend>
+      {{ pform.non_field_errors }}
+      <div>
+        <label>Bio</label>
+        {{ pform.bio }} {{ pform.bio.errors }}
+      </div>
+      <div>
+        <label>Avatar</label>
+        {{ pform.avatar }} {{ pform.avatar.errors }}
+      </div>
+    </fieldset>
+
+    <button type="submit">Save changes</button>
+    <a href="{% url 'profile' %}">Cancel</a>
+  </form>
+{% endblock %}

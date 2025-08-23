@@ -1,0 +1,15 @@
+{% extends "blog/base.html" %}
+{% block title %}Your Profile{% endblock %}
+{% block content %}
+  <h2>Your Profile</h2>
+  <div>
+    {% if request.user.profile.avatar %}
+      <img src="{{ request.user.profile.avatar.url }}" alt="avatar" style="max-width:120px;border-radius:8px;">
+    {% endif %}
+    <p><strong>Username:</strong> {{ request.user.username }}</p>
+    <p><strong>Name:</strong> {{ request.user.first_name }} {{ request.user.last_name }}</p>
+    <p><strong>Email:</strong> {{ request.user.email }}</p>
+    <p><strong>Bio:</strong> {{ request.user.profile.bio|default:"—" }}</p>
+  </div>
+  <p><a href="{% url 'profile_edit' %}">Edit profile</a></p>
+{% endblock %}
