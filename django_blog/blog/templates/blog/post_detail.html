@@ -1,20 +1,31 @@
 {% extends "blog/base.html" %}
 {% block title %}{{ post.title }} - Django Blog{% endblock %}
+
 {% block content %}
-  <article>
-    <h1>{{ post.title }}</h1>
-    <p><small>by {{ post.author.username }} · {{ post.published_date|date:"M d, Y H:i" }}</small></p>
-    <div>
+  <article class="post-detail">
+    <header>
+      <h1>{{ post.title }}</h1>
+      <p>
+        <small>
+          by <strong>{{ post.author.username }}</strong> · 
+          {{ post.published_date|date:"M d, Y H:i" }}
+        </small>
+      </p>
+    </header>
+
+    <section class="post-content">
       <p>{{ post.content|linebreaks }}</p>
-    </div>
+    </section>
   </article>
+
+  <hr>
 
   <p><a href="{% url 'posts' %}">&larr; Back to all posts</a></p>
 
   {% if user.is_authenticated and user == post.author %}
-    <p>
-      <a href="{% url 'post_update' post.pk %}">Edit</a> |
-      <a href="{% url 'post_delete' post.pk %}">Delete</a>
-    </p>
+    <div class="post-actions">
+      <a href="{% url 'post_update' post.pk %}" class="btn btn-sm btn-primary">✏️ Edit</a>
+      <a href="{% url 'post_delete' post.pk %}" class="btn btn-sm btn-danger">🗑️ Delete</a>
+    </div>
   {% endif %}
 {% endblock %}
