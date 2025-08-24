@@ -1,41 +1,36 @@
 {% extends "blog/base.html" %}
+
 {% block title %}{{ post.title }} - Django Blog{% endblock %}
 
 {% block content %}
-  <article class="post-detail">
-    <header>
-      <h1>{{ post.title }}</h1>
-      <p>
-        <small>
-          by <strong>{{ post.author.username }}</strong> · 
-          {{ post.published_date|date:"M d, Y H:i" }}
-        </small>
-      </p>
-    </header>
-
-    <section class="post-content">
-      <p>{{ post.content|linebreaks }}</p>
-    </section>
-
-    <!-- ✅ Added Tags Section -->
-    <p>
-      Tags:
-      {% for tag in post.tags.all %}
-        <a href="{% url 'posts_by_tag' tag.name %}">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
-      {% empty %}
-        No tags
-      {% endfor %}
-    </p>
-  </article>
-
-  <hr>
-
-  <p><a href="{% url 'posts' %}">&larr; Back to all posts</a></p>
-
-  {% if user.is_authenticated and user == post.author %}
-    <div class="post-actions">
-      <a href="{% url 'post_update' post.pk %}" class="btn btn-sm btn-primary">✏️ Edit</a>
-      <a href="{% url 'post_delete' post.pk %}" class="btn btn-sm btn-danger">🗑️ Delete</a>
+<article class="post-detail">
+    <h1>{{ post.title }}</h1>
+    <p>By {{ post.author }} on {{ post.published_date|date:"F j, Y" }}</p>
+    
+    <div class="post-content">
+        {{ post.content|linebreaks }}
     </div>
-  {% endif %}
+
+    <!-- TAGS -->
+    {% if post.tags.all %}
+    <div class="post-tags">
+        <strong>Tags:</strong>
+        {% for tag in post.tags.all %}
+            <a href="{% url 'posts_by_tag' tag.slug %}" class="tag">{{ tag.name }}</a>{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- COMMENTS SECTION -->
+    <h2>Comments</h2>
+    {% for comment in post.comment_set.all %}
+        <div class="comment">
+            <p><strong>{{ comment.author }}:</strong> {{ comment.content }}</p>
+        </div>
+    {% empty %}
+        <p>No comments yet. Be the first to comment!</p>
+    {% endfor %}
+
+    <a href="{% url 'comment_create' post.pk %}" class="btn">Add Comment</a>
+</article>
 {% endblock %}
