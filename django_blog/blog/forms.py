@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Profile
-from .models import Post
+from .models import Post,Tag
 from .models import Comment
 
 class RegistrationForm(UserCreationForm):
@@ -29,14 +29,23 @@ class ProfileForm(forms.ModelForm):
         fields = ("bio", "profile_picture")  # avatar optional; see model
 
 class PostForm(forms.ModelForm):
+    tags = forms.CharField(required=False, help_text="Enter tags separated by commas")
+
     class Meta:
         model = Post
-        fields = ("title", "content")
-        widgets = {
-            "title": forms.TextInput(attrs={"placeholder": "Post title"}),
-            "content": forms.Textarea(attrs={"rows": 8, "placeholder": "Write your post..."}),
-        }       
+        fields = ['title', 'content', 'tags']
 
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if commit:
+            instance.save()
+            tags_str = self.cleaned_data.get('tags', '')
+            if tags_str:
+                tag_names = [t.strip() for t in tags_str.split(',')]
+                for name in tag_names:
+                    tag, created = Tag.objects.get_or_create(name=name)
+                    instance.tags.add(tag)
+        return instance
 
 class CommentForm(forms.ModelForm):
     class Meta:
