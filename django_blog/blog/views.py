@@ -5,9 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.db.models import Q
 from django.contrib.auth.models import User
 from taggit.models import Tag
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models import Post, Comment, Profile
 from .forms import PostForm, CommentForm, UserRegisterForm, UserUpdateForm, ProfileUpdateForm
@@ -18,6 +18,7 @@ from .forms import PostForm, CommentForm, UserRegisterForm, UserUpdateForm, Prof
 def home(request):
     return render(request, 'blog/home.html')
 
+
 # -------------------------
 # Post Views
 # -------------------------
@@ -27,11 +28,13 @@ class PostListView(ListView):
     context_object_name = 'posts'
     ordering = ['-published_date']
 
+
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/post_detail.html'
 
-class PostCreateView(CreateView):
+
+class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/post_form.html'
@@ -41,47 +44,69 @@ class PostCreateView(CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-class PostUpdateView(UpdateView):
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/post_form.html'
     success_url = reverse_lazy('posts')
 
-class PostDeleteView(DeleteView):
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     template_name = 'blog/post_confirm_delete.html'
     success_url = reverse_lazy('posts')
 
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+
+
 # -------------------------
 # Comment Views
 # -------------------------
-class CommentCreateView(CreateView):
+class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
     template_name = 'blog/comment_form.html'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        form.instance.post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        form.instance.post_id = self.kwargs['pk']
         return super().form_valid(form)
 
     def get_success_url(self):
         return reverse_lazy('post_detail', kwargs={'pk': self.kwargs['pk']})
 
-class CommentUpdateView(UpdateView):
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
     form_class = CommentForm
     template_name = 'blog/comment_form.html'
 
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
     def get_success_url(self):
         return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
 
-class CommentDeleteView(DeleteView):
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Comment
     template_name = 'blog/comment_confirm_delete.html'
 
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
     def get_success_url(self):
         return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
+
 
 # -------------------------
 # Profile Views
@@ -90,11 +115,13 @@ class CommentDeleteView(DeleteView):
 def profile_view(request):
     return render(request, 'blog/profile.html')
 
+
 @login_required
 def profile_edit(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
@@ -103,7 +130,9 @@ def profile_edit(request):
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
+
     return render(request, 'blog/profile_edit.html', {'u_form': u_form, 'p_form': p_form})
+
 
 # -------------------------
 # Auth Views
@@ -120,6 +149,7 @@ def user_register(request):
         form = UserRegisterForm()
     return render(request, 'blog/register.html', {'form': form})
 
+
 def user_login(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -131,23 +161,20 @@ def user_login(request):
         form = AuthenticationForm()
     return render(request, 'blog/login.html', {'form': form})
 
+
 def user_logout(request):
     logout(request)
     return redirect('home')
+
 
 # -------------------------
 # Search
 # -------------------------
 def search_posts(request):
     query = request.GET.get('q')
-    results = []
-    if query:
-        results = Post.objects.filter(
-            Q(title__icontains=query) |
-            Q(content__icontains=query) |
-            Q(tags__name__icontains=query)
-        ).distinct()
-    return render(request, 'blog/search_results.html', {'results': results, 'query': query})
+    posts = Post.objects.filter(title__icontains=query) if query else Post.objects.none()
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
+
 
 # -------------------------
 # Tag Filtering
