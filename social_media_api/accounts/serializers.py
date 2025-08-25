@@ -7,13 +7,12 @@ User = get_user_model()
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    # Ensures profile_picture returns full URL in API responses
     profile_picture = serializers.ImageField(required=False, allow_null=True)
 
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'bio', 'profile_picture', 'followers']
-        read_only_fields = ['followers']  # Followers updated via follow/unfollow endpoints
+        read_only_fields = ['followers']
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -24,14 +23,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ("username", "email", "password", "bio", "profile_picture")
 
     def create(self, validated_data):
-        user = User.objects.create_user(
+        user = get_user_model().objects.create_user(   # <-- changed here
             username=validated_data["username"],
             email=validated_data.get("email", ""),
             password=validated_data["password"],
             bio=validated_data.get("bio", ""),
             profile_picture=validated_data.get("profile_picture", None),
         )
-        # Create token for the user
         Token.objects.create(user=user)
         return user
 
