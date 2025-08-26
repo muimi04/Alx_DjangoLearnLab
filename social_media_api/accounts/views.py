@@ -1,4 +1,4 @@
-from rest_framework import permissions, status
+from rest_framework import permissions, status, generics
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.response import Response
@@ -83,6 +83,21 @@ class UnfollowUserView(APIView):
         request.user.following.remove(target_user)
         return Response({"detail": f"You have unfollowed {target_user.username}."},
                         status=status.HTTP_200_OK)
+
+
+class UserListView(generics.GenericAPIView):
+    """Example view using generics.GenericAPIView with CustomUser.objects.all()."""
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Ensures CustomUser.objects.all() is included
+        return User.objects.all()
+
+    def get(self, request):
+        users = self.get_queryset()
+        serializer = self.get_serializer(users, many=True)
+        return Response(serializer.data)
 
 
 def home(request):
