@@ -4,7 +4,8 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import JsonResponse
-
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 
 from .serializers import (
    RegisterSerializer,
@@ -12,10 +13,11 @@ from .serializers import (
    UserSerializer,
 )
 
+User = get_user_model()
+
 
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
-
 
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
@@ -31,7 +33,6 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
-
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -50,9 +51,39 @@ class ProfileView(RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-
     def get_object(self):
         return self.request.user
-    
+
+
+class FollowUserView(APIView):
+    """Follow another user."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, user_id):
+        target_user = get_object_or_404(User, id=user_id)
+        if target_user == request.user:
+            return Response({"detail": "You cannot follow yourself."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        request.user.following.add(target_user)
+        return Response({"detail": f"You are now following {target_user.username}."},
+                        status=status.HTTP_200_OK)
+
+
+class UnfollowUserView(APIView):
+    """Unfollow another user."""
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, user_id):
+        target_user = get_object_or_404(User, id=user_id)
+        if target_user == request.user:
+            return Response({"detail": "You cannot unfollow yourself."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        request.user.following.remove(target_user)
+        return Response({"detail": f"You have unfollowed {target_user.username}."},
+                        status=status.HTTP_200_OK)
+
+
 def home(request):
     return JsonResponse({"message": "Welcome to the Social Media API!"})

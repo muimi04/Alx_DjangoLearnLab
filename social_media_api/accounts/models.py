@@ -20,7 +20,7 @@ class CustomUser(AbstractUser):
     def __str__(self) -> str:
         return self.username
 
-    # Convenience helpers (optional; nice for future endpoints)
+    # Convenience helpers
     def follow(self, other: 'CustomUser'):
         if other != self:
             other.followers.add(self)
@@ -28,3 +28,16 @@ class CustomUser(AbstractUser):
     def unfollow(self, other: 'CustomUser'):
         if other != self:
             other.followers.remove(self)
+
+    def is_following(self, other: 'CustomUser') -> bool:
+        """Check if this user is following another user."""
+        return other in self.following.all()
+
+    def get_following(self):
+        """Return a queryset of all users this user follows."""
+        return self.following.all()
+
+    def get_feed_posts(self):
+        """Return posts from users this user follows, newest first."""
+        from posts.models import Post  # import here to avoid circular import
+        return Post.objects.filter(author__in=self.get_following()).order_by('-created_at')
