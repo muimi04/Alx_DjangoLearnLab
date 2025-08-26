@@ -15,14 +15,32 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import home
+from rest_framework.schemas import get_schema_view
+from rest_framework.renderers import JSONOpenAPIRenderer, BrowsableAPIRenderer
 
 urlpatterns = [
-     path('admin/', admin.site.urls),
-    path('api/accounts/', include('accounts.urls')),   # accounts app
-    path('api/posts/', include('posts.urls')),         # posts app
+    path("admin/", admin.site.urls),
+    path("api/accounts/", include("accounts.urls")),   # accounts app
+    path("api/posts/", include("posts.urls")),         # posts app
+    path("", home, name="home"),
+    path("api-auth/", include("rest_framework.urls")),  # login/logout in browsable API
+    path("api/notifications/", include("notifications.urls")),
+
+
+    # ✅ Updated docs route (OpenAPI instead of coreapi)
+    path(
+        "docs/",
+        get_schema_view(
+            title="Social Media API",
+            renderer_classes=[JSONOpenAPIRenderer, BrowsableAPIRenderer],
+        ),
+        name="api-docs",
+    ),
 ]
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

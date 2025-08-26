@@ -1,4 +1,4 @@
-from rest_framework import permissions, status, generics
+from rest_framework import permissions, status, generics, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.response import Response
@@ -6,6 +6,9 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+
 
 from .serializers import (
    RegisterSerializer,
@@ -102,3 +105,8 @@ class UserListView(generics.GenericAPIView):
 
 def home(request):
     return JsonResponse({"message": "Welcome to the Social Media API!"})
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
