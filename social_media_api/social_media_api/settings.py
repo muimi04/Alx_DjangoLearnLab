@@ -1,9 +1,10 @@
 import os
 from pathlib import Path
 import dj_database_url
-from dotenv import load_dotenv  # ✅ load .env if needed
+from dotenv import load_dotenv
 
-load_dotenv()  # optional, ensures local .env is picked up
+# Load environment variables from .env (for local dev)
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,17 +30,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party
     'rest_framework',
     'rest_framework.authtoken',
+    'storages',   # For S3
+
+    # Local apps
     'accounts.apps.AccountsConfig',
     'posts',
     'notifications',
-    'storages',   # for S3
 ]
 
+# =======================
+# Middleware
+# =======================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ allows static serving if not using S3
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ serves static files when not using S3
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -50,6 +58,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'social_media_api.urls'
 
+# =======================
+# Templates
+# =======================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -72,14 +83,14 @@ WSGI_APPLICATION = 'social_media_api.wsgi.application'
 # =======================
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}", 
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600,
-        ssl_require=False
+        ssl_require=False,
     )
 }
 
 # =======================
-# Password validation
+# Password Validation
 # =======================
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -112,7 +123,7 @@ if os.getenv("USE_S3") == "True":
     AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
     AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", None)
+    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "us-east-1")
     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 
     # Static & Media via S3
@@ -131,7 +142,7 @@ else:
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        "rest_framework.authentication.SessionAuthentication",
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
