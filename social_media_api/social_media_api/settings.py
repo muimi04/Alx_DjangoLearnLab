@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security
 # =======================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "unsafe-secret-key")  # Keep for local dev, change for production
-DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"  # Set in .env for dev, False in production
+DEBUG = False
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")  # Add production domains here
 
 SECURE_BROWSER_XSS_FILTER = True
