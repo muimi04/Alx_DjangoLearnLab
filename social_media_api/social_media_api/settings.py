@@ -161,3 +161,6 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+PORT = 8000  # Default port for local development
