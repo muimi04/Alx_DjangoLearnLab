@@ -21,6 +21,4 @@ This project is part of my **ALX back-end web development Capstone**.
 - **Authentication:** Django REST Framework Auth Token
 - **Deployment Ready:** Production settings configured for WSGI/ASGI
 
----
-
-## 📂 Project Structure
+--
