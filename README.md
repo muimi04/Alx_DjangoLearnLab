@@ -22,3 +22,16 @@ This project is part of my **ALX back-end web development Capstone**.
 - **Deployment Ready:** Production settings configured for WSGI/ASGI
 
 --
+🔗 API Endpoints
+Endpoint	Method	Description
+/	GET	API root (links to all endpoints)
+/register/	POST	Register a new user
+/login/	POST	Login and retrieve auth token
+/logout/	POST	Logout (delete token)
+/profile/	GET/PUT	View or update own profile
+/users/	GET	List all users
+/follow/<id>/	POST	Follow a user
+/unfollow/<id>/	POST	Unfollow a user
+/posts/	GET/POST	List or create posts
+/posts/<id>/	GET/PUT/DELETE	Retrieve, update, or delete a post
+🧪 Testing with Browsable API
