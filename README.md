@@ -1,48 +1,26 @@
-Social Media API (Capstone Project)
+# Social Media API
 
- Overview
+A Django REST Framework-based **social media API** that allows users to register, log in, manage profiles, create posts, and follow/unfollow other users.  
+This project is part of my **ALX back-end web development Capstone**.
 
-This is a social media REST API built with Django and Django REST Framework (DRF).
-It provides functionality for:
+---
 
-User registration, login, and logout
+##  Features
+- User authentication (Register, Login, Logout)
+- JWT/Token-based authentication
+- User profiles (view & update)
+- Create, Read, Update, and Delete (CRUD) posts
+- Follow/Unfollow users
+- Browsable API interface for testing
 
-Profile management
+---
 
-Following/unfollowing users
+##  Tech Stack
+- **Backend:** Django, Django REST Framework
+- **Database:** SQLite (default), can be switched to PostgreSQL
+- **Authentication:** Django REST Framework Auth Token
+- **Deployment Ready:** Production settings configured for WSGI/ASGI
 
-Creating, retrieving, updating, and deleting posts
+---
 
-Browsable API interface for testing
-
-This project is part of the ALX Backend/Full Stack Engineering Capstone.
-
- Features
-
- Authentication: Token-based login/logout
-
- User Management: Register, view, and update profile
-
- Posts: CRUD operations for user posts
-
-Follow/Unfollow: Follow other users
-
- Browsable API: DRF browsable interface for testing endpoints
-
- Tech Stack
-
-Python 3.12+
-
-Django 5.x
-
-Django REST Framework (DRF)
-
-SQLite (default, can be swapped for PostgreSQL)
-
- Installation & Setup
-1. Clone the repository
-git clone https://github.com/muimi04/social_media_api.git
-
-
-The API will be available at:
-👉 http://127.0
+## 📂 Project Structure
